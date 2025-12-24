@@ -5,7 +5,7 @@ app = FastAPI()
 
 @app.get('/')
 def main():
-    print('Hello from alvo!')
+    print('Hello from fonte!')
 
 
 if __name__ == '__main__':
