@@ -3,21 +3,29 @@ name = "fonte"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.12"
 dependencies = [
+    "asyncpg>=0.31.0",
     "fastapi[standard]>=0.127.0",
+    "pydantic-settings>=2.12.0",
+    "sqlalchemy>=2.0.45",
+    "alembic>=1.14.0",
+    "psycopg[binary]>=3.3.2",
 ]
 
 [dependency-groups]
 dev = [
+    "aiosqlite>=0.22.1",
     "pytest>=9.0.2",
+    "pytest-asyncio>=1.3.0",
     "ruff>=0.14.10",
     "taskipy>=1.14.1",
+    "testcontainers[postgres]>=4.13.3",
 ]
 
 [tool.ruff]
 line-length = 88
-extend-exclude = ['migrations']
+extend-exclude = ['alembic/**']
 
 [tool.ruff.lint]
 preview = true
@@ -32,3 +40,8 @@ lint = "ruff check"
 pre_format = "ruff check --fix"
 format = "ruff format"
 run = "fastapi dev /app/main.py"
+
+[tool.pytest.ini_options]
+pythonpath = "."
+addopts = '-p no:warnings'
+asyncio_default_fixture_loop_scope = 'function'

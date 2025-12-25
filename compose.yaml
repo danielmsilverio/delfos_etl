@@ -1,0 +1,28 @@
+services:
+  postgres_fonte:
+    image: postgres:16
+    container_name: postgres_fonte
+    environment:
+      POSTGRES_USER: fonte_user
+      POSTGRES_PASSWORD: fonte_password
+      POSTGRES_DB: fonte_db
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fonte_user -d fonte_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - fonte_data:/var/lib/postgresql/data
+
+  app_fonte:
+    build: ./fonte
+    environment:
+      - DATABASE_URL=postgresql+psycopg://fonte_user:fonte_password@postgres_fonte:5432/fonte_db
+    depends_on:
+      postgres_fonte:
+        condition: service_healthy
+
+volumes:
+  fonte_data:
