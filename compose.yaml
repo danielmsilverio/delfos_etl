@@ -18,11 +18,42 @@ services:
 
   app_fonte:
     build: ./fonte
+    container_name: app_fonte
     environment:
       - DATABASE_URL=postgresql+psycopg://fonte_user:fonte_password@postgres_fonte:5432/fonte_db
+    ports:
+      - "8000:8000"
     depends_on:
       postgres_fonte:
         condition: service_healthy
 
+  postgres_alvo:
+    image: postgres:16
+    container_name: postgres_alvo
+    environment:
+      POSTGRES_USER: alvo_user
+      POSTGRES_PASSWORD: alvo_password
+      POSTGRES_DB: alvo_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - alvo_data:/var/lib/postgresql/data
+    healthcheck:
+       test: ["CMD-SHELL", "pg_isready -U alvo_user -d alvo_db"]
+
+  app_alvo:
+    build: ./alvo
+    container_name: app_alvo
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql+psycopg://alvo_user:alvo_password@postgres_alvo:5432/alvo_db
+      - SOURCE_API_URL=http://app_fonte:8000/api/v1
+    depends_on:
+      postgres_alvo:
+        condition: service_healthy # Garante que o banco está pronto antes do entrypoint rodar
+      app_fonte:
+        condition: service_started
+
 volumes:
   fonte_data:
+  alvo_data:
