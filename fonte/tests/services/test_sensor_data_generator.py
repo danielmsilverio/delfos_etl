@@ -1,16 +1,16 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pytest
 from sqlalchemy import func, select
 
-from app.models.sensor import SensorData
-from app.services.seeder import DataSeeder
+from app.infra.models.sensor import SensorData
+from app.services.sensor_data_generator import SensorDataGenerator
 
 
 @pytest.mark.asyncio
 async def test_generate_data_integration(session):
     # 1. Setup
-    seeder = DataSeeder(session)
+    seeder = SensorDataGenerator(session)
     start_date = datetime(2024, 1, 1, 0, 0, 0)
     days = 1  # Testar com 1 dia para ser rápido (1440 registros)
 
@@ -18,9 +18,12 @@ async def test_generate_data_integration(session):
     result = await seeder.generate_data(start_date, days)
 
     # 3. Verificações do Retorno
-    expected_count = days * 24 * 60
-    assert result['total_records'] == expected_count
-    assert result['start'] == start_date
+    expected_result = {
+        'total_records': days * 24 * 60,
+        'start': start_date,
+        'end': start_date + timedelta(days=days),
+    }
+    assert result == expected_result
 
     # 4. Verificações no Banco (Side Effects)
     # Conta quantos registros foram inseridos

@@ -6,8 +6,8 @@ from datetime import datetime
 # Adiciona o diretório pai ao path para conseguir importar 'app'
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from app.core.database import AsyncSessionLocal
-from app.services.seeder import DataSeeder
+from app.infra.database.database import AsyncSessionLocal
+from app.services.sensor_data_generator import SensorDataGenerator
 
 
 async def main():
@@ -18,7 +18,7 @@ async def main():
     days = 10
 
     async with AsyncSessionLocal() as session:
-        seeder = DataSeeder(session)
+        seeder = SensorDataGenerator(session)
         result = await seeder.generate_data(start_date, days)
 
     print(f'Sucesso! {result["total_records"]} registros inseridos.')

@@ -1,15 +1,15 @@
 import random
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 
-from sqlalchemy import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.sensor import SensorData
+from app.infra.repositories.sensor_repository import SensorRepository
 
 
-class DataSeeder:
-    def __init__(self, db: AsyncSession):
-        self.db = db
+@dataclass
+class SensorDataGenerator:
+    db: AsyncSession
 
     async def generate_data(self, start_date: datetime, days: int = 10):
         """
@@ -20,25 +20,23 @@ class DataSeeder:
 
         current_time = start_date
 
-        # Geração dos dados em memória (rápido)
+        # Geração dos dados em memória
         for _ in range(total_minutes):
             record = {
                 'timestamp': current_time,
                 'wind_speed': round(random.uniform(0, 25), 2),
                 'power': round(random.uniform(0, 5000), 2),  # Ex: kW
                 'ambient_temperature': round(random.uniform(15, 35), 2),
-                # Se tiver ID autoincrement, não precisa passar aqui
             }
             data_batch.append(record)
             current_time += timedelta(minutes=1)
 
-        # Inserção em lote no Banco (Performático)
+        # Inserção em lote no Banco
         # Quebramos em chunks de 10.000 para não estourar memória se for muitos dias
         chunk_size = 10000
         for i in range(0, len(data_batch), chunk_size):
             chunk = data_batch[i : i + chunk_size]
-            stmt = insert(SensorData).values(chunk)
-            await self.db.execute(stmt)
+            await SensorRepository.insert_bulk_sensor_data(self.db, chunk)
 
         await self.db.commit()
 

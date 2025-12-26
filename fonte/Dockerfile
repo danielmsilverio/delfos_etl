@@ -19,6 +19,8 @@ RUN uv sync --frozen --no-install-project
 
 # 3. Copiar o resto do código
 COPY . .
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 # 4. Finalizar a instalação do projeto
 RUN uv sync --frozen
@@ -26,6 +28,9 @@ RUN uv sync --frozen
 # 5. Adicionar o ambiente virtual ao PATH
 # Isso faz com que 'fastapi', 'alembic', etc. fiquem disponíveis
 ENV PATH="/app/.venv/bin:$PATH"
+
+# 6. Define o entrypoint
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 # Comando para iniciar
 # Note que usamos 'app.main:app' (padrão de módulo) ou o caminho do arquivo

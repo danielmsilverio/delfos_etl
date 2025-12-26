@@ -4,9 +4,9 @@ from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from testcontainers.postgres import PostgresContainer
 
-from app.core.database import get_session
+from app.infra.database.database import get_session
+from app.infra.models.sensor import table_registry
 from app.main import app
-from app.models.sensor import table_registry
 
 
 @pytest.fixture(scope='session')
