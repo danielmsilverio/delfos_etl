@@ -21,6 +21,7 @@ Este repositório contém a solução para o desafio técnico da Delfos. O proje
     * [Com Docker](#com-docker-recomendado)
     * [Localmente](#localmente-sem-docker)
 8. [Decisões Técnicas](#-decisões-técnicas)
+9. [Dagster (Bônus)](#-dagster-bônus)
 
 ---
 
@@ -184,3 +185,22 @@ uv run pytest
 *   **Postgres vs Timescale:** O projeto utiliza Postgres padrão, mas a modelagem no Alvo (Tabela `Data` com chave composta `timestamp` + `signal_id`) foi pensada para ser compatível com hiper-tabelas do TimescaleDB no futuro.
 *   **Uv Package Manager:** Escolhido pela velocidade de instalação e resolução de dependências, reduzindo drasticamente o tempo de build do Docker.
 *   **Entrypoints Inteligentes:** Os containers possuem scripts que garantem que as migrações do banco (Alembic) sejam aplicadas automaticamente antes da aplicação iniciar.
+
+---
+
+## 🌟 Dagster (Bônus)
+
+Esta implementação é uma **funcionalidade bônus** e um **desafio de aprendizado**. O autor não possui experiência prévia extensa com Dagster, mas incluiu esta ferramenta para demonstrar capacidade de adaptação e aprendizado de novas tecnologias.
+
+**Dagster** é uma plataforma moderna de orquestração de dados que permite definir, agendar e monitorar pipelines de dados de forma declarativa e testável.
+
+### Como Acessar a UI
+
+Assumindo que o serviço Dagster está em execução via Docker:
+
+```bash
+# Acesse a interface web do Dagster
+http://localhost:3000
+```
+
+A interface do Dagster permite visualizar o status dos pipelines, executar jobs manualmente, e monitorar o histórico de execuções.

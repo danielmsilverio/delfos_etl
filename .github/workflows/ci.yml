@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test-fonte:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./fonte
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+      
+      - name: Install dependencies
+        run: uv sync
+      
+      - name: Run tests
+        run: uv run pytest
+
+  test-alvo:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./alvo
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+      
+      - name: Install dependencies
+        run: uv sync
+      
+      - name: Run tests
+        run: uv run pytest
